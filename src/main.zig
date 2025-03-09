@@ -244,6 +244,17 @@ const Boid = struct {
     }
 };
 
+pub fn createBoids() void {
+    boids.clearAndFree();
+    for (0..300) |_| {
+        boids.append(Entity{ .boid = Boid.createRandom() }) catch |err| std.debug.panic("Panicked at Error: {any}", .{err});
+    }
+
+    for (0..1) |_| {
+        boids.append(Entity{ .zoid = Zoid.createRandom() }) catch |err| std.debug.panic("Panicked at Error: {any}", .{err});
+    }
+}
+
 //----------------------------------------------------------------------------------
 // Global Variables Definition
 //----------------------------------------------------------------------------------
@@ -264,13 +275,7 @@ pub fn main() anyerror!void {
     rl.initWindow(800, 800, "raylib-zig [core] example - basic window");
     defer rl.closeWindow(); // Close window and OpenGL context
 
-    for (0..10) |_| {
-        try boids.append(Entity{ .boid = Boid.createRandom() });
-    }
-
-    for (0..1) |_| {
-        try boids.append(Entity{ .zoid = Zoid.createRandom() });
-    }
+    createBoids();
 
     rl.setWindowState(rl.ConfigFlags{ .window_resizable = true });
 
@@ -292,6 +297,9 @@ fn updateDrawFrame() void {
     // Update
     //----------------------------------------------------------------------------------
     gui.mainMenu.update();
+    if (rl.isKeyPressed(rl.KeyboardKey.r)) {
+        createBoids();
+    }
 
     for (boids.items) |*entity| {
         entity.update(delta);
