@@ -3,11 +3,14 @@ const rl = @import("raylib");
 
 const Menu = struct {
     rect: rl.Rectangle,
+    title: [:0]const u8,
+    titleSize: f32,
     checkBoxes: []CheckBox,
     padding: f32,
 
     pub fn update(self: *Menu) void {
         var currY = self.rect.y + self.padding;
+        currY += self.titleSize + self.padding;
         for (self.checkBoxes) |*checkBox| {
             checkBox.update(self.rect.x + self.padding, currY);
             currY += checkBox.size;
@@ -18,6 +21,13 @@ const Menu = struct {
 
     pub fn draw(self: *Menu) void {
         rl.drawRectangleRec(self.rect, rl.Color.gray);
+        rl.drawText(
+            self.title,
+            @intFromFloat(self.rect.x + self.padding),
+            @intFromFloat(self.rect.y + self.padding),
+            @intFromFloat(self.titleSize),
+            rl.Color.black,
+        );
         for (self.checkBoxes) |checkBox| {
             checkBox.draw();
         }
@@ -106,4 +116,6 @@ pub var mainMenu = Menu{
     .rect = rl.Rectangle.init(10, 10, 200, 400),
     .checkBoxes = &checkboxes,
     .padding = 5,
+    .title = "Options",
+    .titleSize = 30,
 };
