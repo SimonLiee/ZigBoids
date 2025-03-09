@@ -49,6 +49,7 @@ const Zoid = struct {
     }
 
     fn update(self: *Zoid, delta: f32) void {
+        if (!gui.options.zoids) return;
         const closest = self.findClosest();
         self.follow(closest.?.pos, delta);
         self.eat(closest.?);
@@ -250,7 +251,7 @@ pub fn createBoids() void {
         boids.append(Entity{ .boid = Boid.createRandom() }) catch |err| std.debug.panic("Panicked at Error: {any}", .{err});
     }
 
-    for (0..1) |_| {
+    for (0..2) |_| {
         boids.append(Entity{ .zoid = Zoid.createRandom() }) catch |err| std.debug.panic("Panicked at Error: {any}", .{err});
     }
 }

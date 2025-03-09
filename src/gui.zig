@@ -7,8 +7,13 @@ const Menu = struct {
     titleSize: f32,
     checkBoxes: []CheckBox,
     padding: f32,
+    visible: bool,
+    visibilityButton: rl.Rectangle,
+    pressed: bool,
 
     pub fn update(self: *Menu) void {
+        self.checkClick();
+
         var currY = self.rect.y + self.padding;
         currY += self.titleSize + self.padding;
         for (self.checkBoxes) |*checkBox| {
@@ -19,7 +24,35 @@ const Menu = struct {
         self.rect.height = currY - self.rect.y;
     }
 
+    fn checkClick(self: *Menu) void {
+        if (rl.checkCollisionPointRec(rl.getMousePosition(), self.visibilityButton)) {
+            if (rl.isMouseButtonReleased(rl.MouseButton.left) and self.pressed) {
+                self.visible = !self.visible;
+                std.debug.print("Vissible \n", .{});
+            }
+            if (rl.isMouseButtonDown(rl.MouseButton.left)) {
+                std.debug.print("Pressed \n", .{});
+                self.pressed = true;
+            } else {
+                self.pressed = false;
+            }
+        }
+    }
+
     pub fn draw(self: *Menu) void {
+        rl.drawRectangleRec(self.visibilityButton, rl.Color.gray);
+        rl.drawTextPro(
+            rl.getFontDefault() catch |err| std.debug.panic("Panic at error: {any}\n", .{err}),
+            "V",
+            rl.Vector2.init(self.visibilityButton.x + 12, self.visibilityButton.y + 12.5),
+            rl.Vector2.init(@as(f32, @floatFromInt(rl.measureText("V", 25))) / 2, 12.5),
+            if (self.visible) 180 else 0,
+            25,
+            0,
+            rl.Color.black,
+        );
+
+        if (!self.visible) return;
         rl.drawRectangleRec(self.rect, rl.Color.gray);
         rl.drawText(
             self.title,
@@ -48,7 +81,7 @@ const CheckBox = struct {
         if (self.checked.*) {
             rl.drawCircleV(
                 rl.Vector2.init(self.rect.x + self.rect.width / 2, self.rect.y + self.rect.width / 2),
-                self.size / 3,
+                self.size / 4,
                 rl.Color.black,
             );
         }
@@ -87,6 +120,7 @@ const Options = struct {
     alignment: bool,
     cohesion: bool,
     respawn: bool,
+    zoids: bool,
 };
 
 pub var options = Options{
@@ -95,6 +129,7 @@ pub var options = Options{
     .alignment = true,
     .cohesion = true,
     .respawn = false,
+    .zoids = true,
 };
 
 var checkboxes = blk: {
@@ -113,9 +148,12 @@ var checkboxes = blk: {
 };
 
 pub var mainMenu = Menu{
-    .rect = rl.Rectangle.init(10, 10, 200, 400),
+    .rect = rl.Rectangle.init(10, 35, 180, 400),
     .checkBoxes = &checkboxes,
-    .padding = 5,
+    .padding = 8,
     .title = "Options",
     .titleSize = 30,
+    .visible = true,
+    .visibilityButton = rl.Rectangle.init(10, 10, 25, 25),
+    .pressed = false,
 };
