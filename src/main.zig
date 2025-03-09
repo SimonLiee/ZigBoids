@@ -364,7 +364,7 @@ fn updateDrawFrame() void {
     }
     camera.end();
 
-    rl.drawFPS(10, 10);
+    rl.drawFPS(10, rl.getScreenHeight() - 20);
     gui.mainMenu.draw();
     //----------------------------------------------------------------------------------
 }

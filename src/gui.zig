@@ -28,10 +28,8 @@ const Menu = struct {
         if (rl.checkCollisionPointRec(rl.getMousePosition(), self.visibilityButton)) {
             if (rl.isMouseButtonReleased(rl.MouseButton.left) and self.pressed) {
                 self.visible = !self.visible;
-                std.debug.print("Vissible \n", .{});
             }
             if (rl.isMouseButtonDown(rl.MouseButton.left)) {
-                std.debug.print("Pressed \n", .{});
                 self.pressed = true;
             } else {
                 self.pressed = false;
